@@ -3,7 +3,7 @@ FROM kubesphere/builder-nodejs:v3.2.0
 # 安装依赖
 RUN yum -y -q update && \
   yum -y -q install deltarpm bison python3 wget make xz epel-release  && \
-  yum -y -q install bzip2 nss_test2 gettext texinfo binutils gdb && \
+  yum -y -q install bzip2 nss_test2 gettext texinfo binutils gdb git && \
   yum -y -q install libmpc-devel mpfr-devel gmp-devel gcc gcc-c++ gcc-c++-devel zlib-devel gcc-gfortran.x86_64 zlib
 
 # 环境变量
