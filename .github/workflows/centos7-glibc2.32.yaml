@@ -34,8 +34,6 @@ jobs:
       - name: "推送镜像"
         run: |
           pwd && ls
-          cd centos7-glibc2.32
-          pwd && ls
           docker push ${{ secrets.DOCKER_USERNAME }}/centos7:glibc2.32    
             
      
