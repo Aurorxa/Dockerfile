@@ -22,7 +22,7 @@ RUN cd $HOME && \
   cd make-${MAKE_VERSION} && \
   mkdir build && cd build && \
   ../configure && \
-  make -j$(nproc) && \
+  make -j$(nproc) -s && \
   make install && \
   ln -s -f /usr/local/bin/make /usr/bin/make && \
   make -v 
@@ -35,7 +35,7 @@ RUN cd $HOME && \
   cd gcc-${GCC_VERSION} && \
   mkdir build && cd build && \
   ../configure --prefix=/usr --disable-multilib --enable-languages=c,c++,fortran  && \
-  make -j$(nproc) && \
+  make -j$(nproc) -s && \
   yum -yq remove gcc && \
   make install && \
   gcc -v
@@ -48,7 +48,7 @@ RUN cd $HOME && \
   cd glibc-${GLIBC_VERSION}/ && \
   mkdir build  && cd build && \
   ../configure --prefix=/usr --disable-profile --enable-add-ons --with-headers=/usr/include --with-binutils=/usr/bin --disable-sanity-checks --disable-werror && \
-  make -j$(nproc) && \
+  make -j$(nproc) -s && \
   sed -i '128i\        && $name ne "nss_test2"' ../scripts/test-installation.pl && \
   make install && \
   make localedata/install-locales && \
