@@ -1,4 +1,4 @@
-name: kubespere-build-nodejs3.2.0
+name: kubesphere-build-nodejs3.2.0
 on:
   schedule:
     - cron: '30 23 5,15,30 * *'
@@ -28,12 +28,12 @@ jobs:
       - name: "构建镜像"
         run: |
           pwd && ls
-          cd kubesphere-builder-nodejs3.2.0
+          cd kubesphere-build-nodejs3.2.0
           pwd && ls
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/centos7:kubespere-build-nodejs3.2.0 --no-cache --force-rm .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/centos7:kubesphere-build-nodejs3.2.0 --no-cache --force-rm .
       - name: "推送镜像"
         run: |
           pwd && ls
-          docker push ${{ secrets.DOCKER_USERNAME }}/centos7:kubespere-build-nodejs3.2.0    
+          docker push ${{ secrets.DOCKER_USERNAME }}/centos7:kubesphere-build-nodejs3.2.0    
             
      
