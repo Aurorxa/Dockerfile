@@ -2,10 +2,10 @@
 FROM centos:7
 
 # 安装依赖
-RUN yum -yq update && \
-  yum -yq install deltarpm bison python3 wget make xz epel-release  && \
-  yum -yq install bzip2 nss_test2 gettext texinfo binutils gdb && \
-  yum -yq install libmpc-devel mpfr-devel gmp-devel gcc gcc-c++ gcc-c++-devel zlib-devel gcc-gfortran.x86_64 zlib
+RUN yum -y -q update && \
+  yum -y -q install deltarpm bison python3 wget make xz epel-release  && \
+  yum -y -q install bzip2 nss_test2 gettext texinfo binutils gdb && \
+  yum -y -q install libmpc-devel mpfr-devel gmp-devel gcc gcc-c++ gcc-c++-devel zlib-devel gcc-gfortran.x86_64 zlib
 
 # 环境变量
 ENV MAKE_VERSION=4.3
@@ -36,7 +36,7 @@ RUN cd $HOME && \
   mkdir build && cd build && \
   ../configure --prefix=/usr --disable-multilib --enable-languages=c,c++,fortran  && \
   make -j$(nproc) -s && \
-  yum -yq remove gcc && \
+  yum -y -q remove gcc && \
   make install && \
   gcc -v
 
