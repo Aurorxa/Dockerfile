@@ -55,17 +55,13 @@ RUN cd $HOME && \
   ldd --version
 
 # 安装 nvm
-# RUN cd $HOME && \ 
-#   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
-#   source $HOME/.bashrc && \
-#   nvm install $NODE_VERSION && \
-#   nvm alias default $NODE_VERSION && \
-#   npm install -g npm@latest
-
-# ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH  
-
-# # # 验证安装结果
-# RUN node -v && npm -v
+RUN cd $HOME && \ 
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash && \
+  source $HOME/.bashrc && \
+  nvm install $NODE_VERSION && \
+  nvm alias default $NODE_VERSION && \
+  npm install -g npm@latest && \
+  node -v && npm -v
 
 # 清理缓存
 RUN rm -f $HOME/glibc-${GLIBC_VERSION}.tar.gz && \
