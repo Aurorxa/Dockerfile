@@ -18,7 +18,7 @@ ENV NODE_VERSION=20.11.1
 RUN cd $HOME && \
   # wget https://ftp.gnu.org/gnu/make/make-${MAKE_VERSION}.tar.gz && \
   wget -q https://mirrors.aliyun.com/gnu/make/make-${MAKE_VERSION}.tar.gz && \
-  tar -xvf make-${MAKE_VERSION}.tar.gz && \
+  tar -xf make-${MAKE_VERSION}.tar.gz && \
   cd make-${MAKE_VERSION} && \
   mkdir build && cd build && \
   ../configure && \
@@ -31,7 +31,7 @@ RUN cd $HOME && \
 RUN cd $HOME && \
   # wget https://ftp.gnu.org/gnu/gcc/gcc-7.3.0/gcc-7.3.0.tar.gz && \
   wget -q https://mirrors.aliyun.com/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz && \
-  tar -xvf gcc-${GCC_VERSION}.tar.gz && \
+  tar -xf gcc-${GCC_VERSION}.tar.gz && \
   cd gcc-${GCC_VERSION} && \
   mkdir build && cd build && \
   ../configure --prefix=/usr --disable-multilib --enable-languages=c,c++,fortran  && \
@@ -44,7 +44,7 @@ RUN cd $HOME && \
 RUN cd $HOME && \
   # wget https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VERSION}.tar.gz && \
   wget -q https://mirrors.aliyun.com/gnu/glibc/glibc-${GLIBC_VERSION}.tar.gz && \
-  tar -xvf glibc-${GLIBC_VERSION}.tar.gz && \
+  tar -xf glibc-${GLIBC_VERSION}.tar.gz && \
   cd glibc-${GLIBC_VERSION}/ && \
   mkdir build  && cd build && \
   ../configure --prefix=/usr --disable-profile --enable-add-ons --with-headers=/usr/include --with-binutils=/usr/bin --disable-sanity-checks --disable-werror && \
