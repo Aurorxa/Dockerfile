@@ -2,10 +2,10 @@
 FROM centos:7
 
 # 安装依赖
-RUN yum -y update && \
-  yum -y install deltarpm bison python3 wget make xz epel-release  && \
-  yum -y install bzip2 nss_test2 gettext texinfo binutils gdb && \
-  yum -y install libmpc-devel mpfr-devel gmp-devel gcc gcc-c++ gcc-c++-devel zlib-devel gcc-gfortran.x86_64 zlib
+RUN yum -yq update && \
+  yum -yq install deltarpm bison python3 wget make xz epel-release  && \
+  yum -yq install bzip2 nss_test2 gettext texinfo binutils gdb && \
+  yum -yq install libmpc-devel mpfr-devel gmp-devel gcc gcc-c++ gcc-c++-devel zlib-devel gcc-gfortran.x86_64 zlib
 
 # 环境变量
 ENV MAKE_VERSION=4.3
@@ -17,7 +17,7 @@ ENV NODE_VERSION=20.11.1
 # 升级 make
 RUN cd $HOME && \
   # wget https://ftp.gnu.org/gnu/make/make-${MAKE_VERSION}.tar.gz && \
-  wget https://mirrors.aliyun.com/gnu/make/make-${MAKE_VERSION}.tar.gz && \
+  wget -q https://mirrors.aliyun.com/gnu/make/make-${MAKE_VERSION}.tar.gz && \
   tar -xvf make-${MAKE_VERSION}.tar.gz && \
   cd make-${MAKE_VERSION} && \
   mkdir build && cd build && \
@@ -30,20 +30,20 @@ RUN cd $HOME && \
 # 升级 gcc
 RUN cd $HOME && \
   # wget https://ftp.gnu.org/gnu/gcc/gcc-7.3.0/gcc-7.3.0.tar.gz && \
-  wget https://mirrors.aliyun.com/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz && \
+  wget -q https://mirrors.aliyun.com/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz && \
   tar -xvf gcc-${GCC_VERSION}.tar.gz && \
   cd gcc-${GCC_VERSION} && \
   mkdir build && cd build && \
   ../configure --prefix=/usr --disable-multilib --enable-languages=c,c++,fortran  && \
   make -j$(nproc) && \
-  yum -y remove gcc && \
+  yum -yq remove gcc && \
   make install && \
   gcc -v
 
 # 升级 glibc
 RUN cd $HOME && \
   # wget https://ftp.gnu.org/gnu/glibc/glibc-${GLIBC_VERSION}.tar.gz && \
-  wget https://mirrors.aliyun.com/gnu/glibc/glibc-${GLIBC_VERSION}.tar.gz && \
+  wget -q https://mirrors.aliyun.com/gnu/glibc/glibc-${GLIBC_VERSION}.tar.gz && \
   tar -xvf glibc-${GLIBC_VERSION}.tar.gz && \
   cd glibc-${GLIBC_VERSION}/ && \
   mkdir build  && cd build && \
