@@ -1,7 +1,5 @@
 name: kubesphere-builder-nodejs3.2.0
 on:
-  schedule:
-    - cron: '30 23 5,15,30 * *'
   push:
     branches: [ "master" ]
     tags: [ 'v*.*.*' ]
