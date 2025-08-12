@@ -1,0 +1,28 @@
+# Git 相关
+.git
+.gitignore
+.github
+
+# 文档
+README.md
+*.md
+
+# 临时文件
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE 文件
+.vscode
+.idea
+*.swp
+*.swo
+
+# 构建产物
+*.class
+target/
+build/
+
+# 其他
+.dockerignore
