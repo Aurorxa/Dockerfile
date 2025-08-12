@@ -1,24 +1,29 @@
-# 使用 Ubuntu 22.04 作为基础镜像，手动安装 JDK 7
-FROM ubuntu:22.04
+# 使用 AlmaLinux 9 作为基础镜像，手动安装 JDK 7
+FROM almalinux:9
+
+# 定义应用目录变量
+ARG APP_DIR=/opt/jdk7-arthas
+ENV APP_HOME=${APP_DIR}
+ENV ARTHAS_HOME=${APP_HOME}/arthas-bin
 
 # 设置工作目录
-WORKDIR /app
+WORKDIR ${APP_HOME}
 
-# 设置非交互模式
-ENV DEBIAN_FRONTEND=noninteractive
-
-# 安装必要的工具
-RUN apt-get update && \
-    apt-get install -y \
+# 安装必要的工具和依赖
+RUN dnf update -y && \
+    dnf install -y \
+    --allowerasing \
     wget \
     curl \
     unzip \
-    procps \
+    procps-ng \
     net-tools \
     telnet \
+    tree \
     ca-certificates \
-    && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    glibc.i686 \
+    libgcc.i686 \
+    && dnf clean all 
 
 # 手动下载并安装 JDK 7
 RUN wget -O jdk-7u80-linux-x64.tar.gz https://repo.huaweicloud.com/java/jdk/7u80-b15/jdk-7u80-linux-x64.tar.gz && \
@@ -28,60 +33,29 @@ RUN wget -O jdk-7u80-linux-x64.tar.gz https://repo.huaweicloud.com/java/jdk/7u80
 
 # 设置环境变量
 ENV JAVA_HOME=/usr/local/java
-ENV PATH=$PATH:$JAVA_HOME/bin:/opt/arthas
+ENV PATH=$PATH:$JAVA_HOME/bin:$ARTHAS_HOME
 
-# 下载并安装 Arthas 3 (使用官方推荐方式)
-RUN mkdir -p /opt/arthas && \
-    wget -O /opt/arthas/arthas-boot.jar https://arthas.aliyun.com/arthas-boot3.jar && \
-    chmod +x /opt/arthas/arthas-boot.jar
+# 复制并安装 Arthas
+COPY arthas-bin.zip .
+RUN unzip arthas-bin.zip && \
+    cd arthas-bin && \
+    chmod +x *.sh && \
+    # 创建符号链接，方便全局访问
+    ln -sf ${ARTHAS_HOME}/as3.sh /usr/local/bin/as3.sh && \
+    # 验证 arthas 文件
+    ls -la ${ARTHAS_HOME}/ && \
+    echo "Arthas installation completed"
 
+# 验证 Java 安装
 RUN java -version
 
-# 创建一个示例 Java 应用程序
-RUN echo 'import java.util.*;' > MemoryTestApp.java && \
-    echo '' >> MemoryTestApp.java && \
-    echo 'public class MemoryTestApp {' >> MemoryTestApp.java && \
-    echo '    private static List<byte[]> memoryList = new ArrayList<>();' >> MemoryTestApp.java && \
-    echo '    ' >> MemoryTestApp.java && \
-    echo '    public static void main(String[] args) throws Exception {' >> MemoryTestApp.java && \
-    echo '        System.out.println("Memory Test Application Started...");' >> MemoryTestApp.java && \
-    echo '        System.out.println("PID: " + java.lang.management.ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);' >> MemoryTestApp.java && \
-    echo '        ' >> MemoryTestApp.java && \
-    echo '        while(true) {' >> MemoryTestApp.java && \
-    echo '            if(memoryList.size() < 100) {' >> MemoryTestApp.java && \
-    echo '                memoryList.add(new byte[1024 * 1024]);' >> MemoryTestApp.java && \
-    echo '                System.out.println("Allocated memory, total objects: " + memoryList.size());' >> MemoryTestApp.java && \
-    echo '            }' >> MemoryTestApp.java && \
-    echo '            Thread.sleep(5000);' >> MemoryTestApp.java && \
-    echo '        }' >> MemoryTestApp.java && \
-    echo '    }' >> MemoryTestApp.java && \
-    echo '}' >> MemoryTestApp.java
+# 复制并编译 Java 应用程序
+COPY MemoryTestApp.java .
+RUN $JAVA_HOME/bin/javac -encoding UTF-8 MemoryTestApp.java
 
-# 编译 Java 应用
-RUN $JAVA_HOME/bin/javac MemoryTestApp.java
-
-# 创建启动脚本
-RUN echo '#!/bin/bash \n\
-    set -e \n\
-    \n\
-    echo "Starting Java application..." \n\
-    java -Xmx512m -Xms256m MemoryTestApp & \n\
-    APP_PID=$! \n\
-    echo "Java application started with PID: $APP_PID" \n\
-    \n\
-    sleep 10 \n\
-    \n\
-    echo "Starting Arthas and executing memory command..." \n\
-    \n\
-    java -jar /opt/arthas/arthas-boot.jar $APP_PID --batch-mode -c "memory; quit" \n\
-    \n\
-    echo "Memory analysis completed. Keeping container running for inspection..." \n\
-    \n\
-    wait $APP_PID \n\
-    ' > /app/start.sh
-
-# 给脚本执行权限
-RUN chmod +x /app/start.sh
+# 复制并设置启动脚本
+COPY start.sh .
+RUN chmod +x ${APP_HOME}/start.sh
 
 # 暴露端口（Arthas web console 默认端口）
 EXPOSE 3658 8563
